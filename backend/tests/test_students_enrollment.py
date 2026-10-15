@@ -77,6 +77,7 @@ def test_irregular_enrollment_preserves_pairs_and_avoids_double_count(client,db)
     assert len(preview['placements'][0]['assigned_sections'])==3
     assert preview['placements'][0]['advisedSubjectCount']==3
     assert preview['placements'][0]['isIrregular'] is True
+    assert [subject['subjectId'] for subject in preview['placements'][0]['irregularSubjects']] == ['CC101', 'CC201', 'CC301']
     section=preview['placements'][0]['available_sections'][0]
     assert section['irregularCount']==1 and section['irregularCapacity']==5
     assert section['displayCount']==0 and section['displayCapacity']==5

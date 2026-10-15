@@ -8,7 +8,7 @@ import StatCard from "../components/ui/StatCard";
 import QuickActionCard from "../components/ui/QuickActionCard";
 import LoadingState from "../components/ui/LoadingState";
 import Panel from "../components/ui/Panel";
-import { buildScheduleMap, buildStudentScheduleKeys, formatScheduleTimeRange } from "../lib/scheduleUtils";
+import { buildScheduleKey, buildScheduleMap, buildStudentScheduleKeys, formatScheduleTimeRange } from "../lib/scheduleUtils";
 import { pushImportNotification } from "../lib/notificationUtils";
 import { exportStudentAsPdf, exportSectionAsPdf } from "../utils/studentFiles";
 import { getStudentSectionDisplay, getStudentYearDisplay } from "../utils/studentDisplay";
@@ -408,6 +408,39 @@ function Dashboard() {
                     .map((result) => (result.status === "fulfilled" ? result.value : null))
                     .filter(Boolean);
                 activeMap = buildScheduleMap(scheduleDetails);
+            }
+
+            const irregularSubjects = Array.isArray(placement?.irregularSubjects)
+                ? placement.irregularSubjects
+                : [];
+            if (placement?.isIrregular && irregularSubjects.length > 0) {
+                const matchedRows = irregularSubjects.flatMap((subject) => {
+                    const subjectId = String(subject?.subjectId ?? "").trim().toLowerCase();
+                    const scheduleKey = buildScheduleKey({
+                        year: subject?.targetYear,
+                        semester: subject?.targetSemester ?? placement?.assigned_semester,
+                        section: subject?.targetSection,
+                    });
+                    if (!subjectId || !scheduleKey) return [];
+
+                    return (activeMap.get(scheduleKey) ?? [])
+                        .filter((classEntry) =>
+                            String(classEntry?.subjectCode ?? classEntry?.subject_code ?? "").trim().toLowerCase() === subjectId
+                        )
+                        .map((classEntry) => ({
+                            ...classEntry,
+                            day: Array.isArray(classEntry?.days)
+                                ? classEntry.days.filter(Boolean).join(", ")
+                                : classEntry?.day ?? "-",
+                        }));
+                });
+
+                if (!matchedRows.length) {
+                    setApplicantScheduleError("No matching schedule found for the student's irregular subjects.");
+                } else {
+                    setApplicantScheduleRows(matchedRows);
+                }
+                return;
             }
 
             const scheduleKeys = buildStudentScheduleKeys(scheduleStudent);

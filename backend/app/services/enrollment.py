@@ -211,6 +211,7 @@ def placement_result(found, requested, plan, groups):
             'assigned_section': chosen['section'], 'assigned_year': chosen['year'], 'assigned_semester': chosen['semester'],
             'status': student['status'], 'isIrregular': is_irregular,
             'irregularSection': student.get('irregularSection', []), 'irregularYear': student.get('irregularYear', []),
+            'irregularSubjects': deepcopy(student.get('irregularSubjects', [])),
             'assigned_sections': placements, 'available_sections': available, 'advisedSubjectCount': len(meta['subjectIds']) if meta else 0}
 
 
