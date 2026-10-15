@@ -1,0 +1,193 @@
+@import "tailwindcss";
+
+:root {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #202b25;
+  --brand: #2e522a;
+  --brand-dark: #173c2c;
+  --surface: #ffffff;
+  --canvas: #f4f7f5;
+  --border: #dce3dd;
+  background: #f4f7f5;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code, kbd, samp, pre, .font-mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: #f4f7f5;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: #f4f7f5;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(16, 185, 129, 0.24);
+  outline-offset: 2px;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+::selection {
+  background: rgba(16, 185, 129, 0.2);
+  color: #14532d;
+}
+
+* {
+  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: #cbd5e1;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  background-clip: padding-box;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fade {
+  animation: fade 0.2s ease-out;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.yearBtn {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: white;
+  padding: 0.6rem 1rem;
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.yearBtn:hover {
+  border-color: #a7f3d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.yearBtn.active,
+.yearBtn[aria-pressed="true"] {
+  border-color: #1f5a3c;
+  background: #1f5a3c;
+  color: white;
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Forest-green identity, shared by existing emerald utilities. */
+@theme {
+  --color-emerald-50: #f1f6ef;
+  --color-emerald-100: #e2eddf;
+  --color-emerald-200: #c4d8bf;
+  --color-emerald-300: #a0be99;
+  --color-emerald-400: #76996c;
+  --color-emerald-500: #567d4b;
+  --color-emerald-600: #416b36;
+  --color-emerald-700: #2e522a;
+  --color-emerald-800: #264724;
+  --color-emerald-900: #1f3d24;
+  --color-emerald-950: #142a1b;
+  --color-slate-400: #68786f;
+  --color-slate-500: #5d6d63;
+  --color-slate-600: #4c5c52;
+  --color-slate-700: #394b3f;
+  --color-slate-800: #293c2f;
+  --color-slate-900: #202f25;
+}
+
+body { line-height: 1.5; }
+input, textarea { caret-color: var(--brand); }
+input::placeholder, textarea::placeholder { color: #68786f; opacity: 1; }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--brand); }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button:disabled { cursor: not-allowed; }
+table { font-variant-numeric: tabular-nums; }
+th { white-space: nowrap; }
+tbody tr { transition: background-color 120ms ease; }
+.yearBtn { border-radius: 6px; box-shadow: none; }
+.skip-link { position: fixed; top: -5rem; left: 1rem; z-index: 500; padding: .75rem 1rem; background: var(--brand-dark); color: white; border-radius: 6px; }
+.skip-link:focus { top: 1rem; }
+@media (max-width: 639px) {
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px; }
+}

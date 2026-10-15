@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "6a6b3decf8a764abf75e755f"
+  },
+  "semester": "1st",
+  "year": "1",
+  "section": "A",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-30T12:05:00.033Z"
+  },
+  "irregularCount": 0,
+  "irregularCapacity": 5,
+  "blockCount": 1,
+  "blockCapacity": 45,
+  "status": "Available",
+  "totalCapacity": 50,
+  "updatedAt": {
+    "$date": "2026-07-30T12:05:00.019Z"
+  }
+}]

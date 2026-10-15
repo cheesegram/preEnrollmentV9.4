@@ -1,0 +1,144 @@
+[{
+  "_id": {
+    "$oid": "6ac3a6c67ee2dfcdcf61e2cd"
+  },
+  "studentNumber": "202610121",
+  "schoolYear": "2026-2027",
+  "year": "1",
+  "section": "A",
+  "irregularYear": [],
+  "irregularSection": [],
+  "semester": "1st",
+  "status": "Block",
+  "firstName": "Onmatpe",
+  "middleName": "Sanchez",
+  "lastName": "Ruez",
+  "suffix": "II",
+  "classes": [
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "CC101",
+      "day": "Monday",
+      "startTime": 420,
+      "endTime": 540,
+      "roomId": "virtual_auto_1",
+      "roomName": "VR IITI 1",
+      "profId": "6a71ae476300e08da083cd32",
+      "profName": "Casuco, Florentino S."
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "CC101",
+      "day": "Thursday",
+      "startTime": 420,
+      "endTime": 600,
+      "roomId": "6a78548abd1756bc1f277e7c",
+      "roomName": "Computer Lab 1",
+      "profId": "6a71ae476300e08da083cd32",
+      "profName": "Casuco, Florentino S."
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "CC102",
+      "day": "Thursday",
+      "startTime": 720,
+      "endTime": 840,
+      "roomId": "virtual_auto_1",
+      "roomName": "VR IITI 1",
+      "profId": "6a71ae476300e08da083cd53",
+      "profName": "Samin, Maylene V."
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "CC102",
+      "day": "Monday",
+      "startTime": 780,
+      "endTime": 960,
+      "roomId": "6a78548abd1756bc1f277e7c",
+      "roomName": "Computer Lab 1",
+      "profId": "6a71ae476300e08da083cd53",
+      "profName": "Samin, Maylene V."
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "FIL31",
+      "day": "Thursday",
+      "startTime": 840,
+      "endTime": 1020,
+      "roomId": "virtual_auto_1",
+      "roomName": "VR IAS 1",
+      "profId": "tba",
+      "profName": "TBA"
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "SCI75",
+      "day": "Tuesday",
+      "startTime": 420,
+      "endTime": 600,
+      "roomId": "virtual_auto_1",
+      "roomName": "VR IAS 1",
+      "profId": "6a7043d7dd8eacfcd9648dee",
+      "profName": "Garcia, Antonio"
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "SSP83",
+      "day": "Tuesday",
+      "startTime": 600,
+      "endTime": 780,
+      "roomId": "virtual_auto_1",
+      "roomName": "VR IITI 1",
+      "profId": "tba",
+      "profName": "TBA"
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "ENG22",
+      "day": "Tuesday",
+      "startTime": 780,
+      "endTime": 960,
+      "roomId": "virtual_auto_1",
+      "roomName": "VR IAS 1",
+      "profId": "6a7043d7dd8eacfcd9648dec",
+      "profName": "Dela Cruz, Juan"
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "PFT61",
+      "day": "Monday",
+      "startTime": 960,
+      "endTime": 1080,
+      "roomId": "6a78548abd1756bc1f277e77",
+      "roomName": "PA-301",
+      "profId": "6a7043d7dd8eacfcd9648def",
+      "profName": "Santos, Ana"
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "NST51",
+      "day": "Monday",
+      "startTime": 540,
+      "endTime": 630,
+      "roomId": "virtual_auto_1",
+      "roomName": "VR IITI 1",
+      "profId": "6a7043d7dd8eacfcd9648def",
+      "profName": "Santos, Ana"
+    },
+    {
+      "sectionName": "BSIT-1A",
+      "subjectCode": "NST51",
+      "day": "Wednesday",
+      "startTime": 420,
+      "endTime": 510,
+      "roomId": "virtual_auto_1",
+      "roomName": "VR IITI 1",
+      "profId": "6a7043d7dd8eacfcd9648def",
+      "profName": "Santos, Ana"
+    }
+  ],
+  "createdAt": {
+    "$date": "2026-10-05T13:31:50.863Z"
+  },
+  "__v": 0
+}]

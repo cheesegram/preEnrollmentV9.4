@@ -1,0 +1,333 @@
+[
+    { 
+        "name": "Payongayong, Reina T.", 
+        "title": "Dr.", 
+        "position": "dean",
+        "sex": "female",
+        "specializations": "IAS101"
+    },
+    { 
+        "name": "Ablaza, Marvic V.", 
+        "sex": "male", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": "SIA101"
+    },
+    { 
+        "name": "Ancan, Carmeli Marie Joy S.", 
+        "sex": "female", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": "CC106"
+    },
+    { 
+        "name": "Balacania, Russel Amira", 
+        "sex": "female", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": "CC105"
+    },
+    { 
+        "name": "Calma, Renz Butch S.", 
+        "sex": "male", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": ["CC102", "PF101"]
+    },
+    { 
+        "name": "Cao, Almario Epifanio", 
+        "sex": "male", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": "AIS03"
+    },
+    { 
+        "name": "Castro, Cklarenz V.", 
+        "sex": "male", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": "SCI73"
+    },
+    { 
+        "name": "Casuco, Florentino S.", 
+        "sex": "male", 
+        "status": ["full-time", "part-time"], 
+        "remarks": "PT-FT",
+        "position": "program director",
+        "specializations": ["PF101", "MEI", "CC101", "CC104", "PT101"]
+    },
+    { 
+        "name": "Chico, Jaimie S.", 
+        "sex": "female", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": "IPT102"
+    },
+    { 
+        "name": "Enrile, Jocelyn C.", 
+        "sex": "female", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": "CC102"
+    },
+    { 
+        "name": "Evangelista, Jermyn G.", 
+        "sex": "female", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": ["AOS01", "MS102"]
+    },
+    { 
+        "name": "Malapira, Joel S.", 
+        "sex": "male", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": "SCI73"
+    },
+    { 
+        "name": "Mendoza, Ma. Cecilia S.", 
+        "sex": "female", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": ["CC101", "AOS01"]
+    },
+    { 
+        "name": "Morano, Jonathan C.", 
+        "sex": "male", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": "CAP102"
+    },
+    { 
+        "name": "Nabong, Athens Maverick F.", 
+        "sex": "male", 
+        "status": "full-time", 
+        "remarks": "", 
+        "specializations": ["CC102", "CC105"]
+    },
+    { 
+        "name": "Orpilla, Mark Joeven C.", 
+        "sex": "male", 
+        "status": "full-time", 
+        "remarks": "bago", 
+        "specializations": ["CC105","CC101"]
+    },
+    {
+        "name": "Alquiroz, Uniko C.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "bago", 
+        "specializations": "CC101"
+    },
+    {
+        "name": "Amatorio, Khimberly DC.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": ["SIA101", "SIA102", "CAP101"]
+    },
+    {
+        "name": "Aure, Rochelle C.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "CC101"
+    },
+    {
+        "name": "Avila, Rozel B.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "nagtapos ng masterado", 
+        "specializations": ["PF101", "ACT09"]
+    },
+    {
+        "name": "Bernardo, Myrtel S.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": ["CC105", "MS102"]
+    },
+    {
+        "name": "Canlas, Renz Allan V.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "IAS102"
+    },
+    {
+        "name": "Carpio, Ma. Theresa Z.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "AOS01"
+    },
+    {
+        "name": "Cenita, Jonelle Angelo S.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "SIA102"
+    },
+    {
+        "name": "Cruz, Ma. Melanie A.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "IAS102"
+    },
+    {
+        "name": "De Robles, Jerome P.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "bago", 
+        "specializations": ["GEC-DC", "MS102"]
+    },
+    {
+        "name": "Del Monte, Vergil B.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "MS102"
+    },
+    {
+        "name": "Dela Cruz, Patrick E.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "ACT21"
+    },
+    {
+        "name": "Dimafelix, Jerome M.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "NET102"
+    },
+    {
+        "name": "Inducil, Mark Angelo G.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": ["CC105", "NET102"]
+    },
+    {
+        "name": "Lactao, Marie Bernadette L.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "bago", 
+        "specializations": "SP101"
+    },
+    {
+        "name": "Macalinao, Dave F.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "nagtapos ng masterado", 
+        "specializations": "NET102"
+    },
+    {
+        "name": "Manganti, Rowena",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": ["AOS01", "GEC-DC", "SCI73"]
+    },
+    {
+        "name": "Martin, Renz Adrian S.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "AOS01"
+    },
+    {
+        "name": "Marucot, Arjay C.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "CC105"
+    },
+    {
+        "name": "Mendoza, Darius R.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "GEC-DC"
+    },
+    {
+        "name": "Orbe, Joanna Marie B.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "secondary faculty", 
+        "specializations": "SP101"
+    },
+    {
+        "name": "Reyes, Edrian Christian C.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "bago", 
+        "specializations": ""
+    },
+    {
+        "name": "Reyes, Joshua",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "bumalik", 
+        "specializations": ["ACT21", "AIS03"]
+    },
+    {
+        "name": "Saberon, Arthur John M.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "PF101"
+    },
+    {
+        "name": "Samin, Maylene V.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": ["CC102", "AIS04"]
+    },
+    {
+        "name": "San Jose, Christopher Rey",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "PF101"
+    },
+    {
+        "name": "Santos, Edgie Boy T.",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": ["PF101", "NET101"]
+    },
+    {
+        "name": "Santos, Jasmin F.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": ["MS102", "SP101"]
+    },
+    {
+        "name": "Santos, Rhea G.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": ["SIA102", "SP101"]
+    },
+    {
+        "name": "Tomas, Ma. Antonette M.",
+        "sex": "female",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": "CC105"
+    },
+    {
+        "name": "Villacarlos, Carlos, Jr. ",
+        "sex": "male",
+        "status": "part-time", 
+        "remarks": "", 
+        "specializations": ["SIA102", "GEC-TM"]
+    }
+]
+

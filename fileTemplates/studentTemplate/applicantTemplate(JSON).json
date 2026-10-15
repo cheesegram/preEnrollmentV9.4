@@ -1,0 +1,138 @@
+[
+  {
+    "_id": {
+      "$oid": "6ab9195d1292acc8ce3f2f28"
+    },
+    "email": "crljyc04@gmail.com",
+    "schoolYear": "2026-2027 2nd Semester",
+    "isSubmitted": true,
+    "admissionStatus": "Admitted",
+    "admissionRemarks": "Passed",
+    "slotStatus": "Admitted",
+    "status": "Admitted",
+    "section": "A",
+    "applicantId": "A-202600001",
+    "createdAt": {
+      "$date": "2026-09-27T13:26:09.265Z"
+    },
+    "updatedAt": {
+      "$date": "2026-09-30T10:20:00.000Z"
+    },
+    "applicantType": "SHS Graduate",
+    "firstChoice": "Bachelor of Science in Information Technology",
+    "secondChoice": "Bachelor of Science in Tourism Management",
+    "reassignedProgram": "Bachelor of Science in Mathematics",
+    "activeProgram": "Bachelor of Science in Mathematics",
+    "activeChoiceType": "reassigned",
+    "isReassigned": true,
+    "birthDate": "2007-09-10",
+    "civilStatus": "SINGLE",
+    "contactNumber": "09876543234",
+    "disability": false,
+    "disabilitySpec": "",
+    "fatherContact": "09876545677",
+    "fatherName": "Hgfgh",
+    "firstName": "Carlo Jay",
+    "fourPs": false,
+    "fourPsSpec": "",
+    "gender": "MALE",
+    "indigenous": false,
+    "indigenousSpec": "",
+    "isSameAddress": true,
+    "lastName": "Cea",
+    "middleName": "",
+    "motherContact": "09876546767",
+    "motherName": "Jhgvbn",
+    "permanentBarangay": "San Pedro",
+    "permanentCity": "Bustos",
+    "permanentHouse": "445",
+    "permanentProvince": "Bulacan",
+    "permanentStreet": "gfdsdg",
+    "permanentZip": "8576",
+    "photo": "https://res.cloudinary.com/jokjki1c/image/upload/v1790515766/btech_admission/photo-1790515758037.jpg",
+    "placeOfBirth": "HGF",
+    "presentBarangay": "San Pedro",
+    "presentCity": "Bustos",
+    "presentHouse": "445",
+    "presentProvince": "Bulacan",
+    "presentStreet": "gfdsdg",
+    "presentZip": "8576",
+    "soloParent": true,
+    "soloParentSpec": "",
+    "spouseName": "",
+    "suffix": "",
+    "collegeAddress": "",
+    "collegeSchool": "",
+    "collegeYear": "",
+    "elementaryAddress": "BUSTOS",
+    "elementarySchool": "BUSTOS",
+    "elementaryYear": "76545",
+    "grade11Gwa": "90",
+    "grade12Gwa": "91",
+    "gwa": "90",
+    "juniorHighAddress": "BUSTOS",
+    "juniorHighSchool": "BUSTOS",
+    "juniorHighYear": "2000",
+    "seniorHighAddress": "BUSTOS",
+    "seniorHighSchool": "BUSTOS",
+    "seniorHighYear": "2020",
+    "strand": "ABM",
+    "track": "ACADEMIC",
+    "documents": [
+      {
+        "filename": "birth_cert___Administrative-Support-1024x579.jpg",
+        "originalName": "birth_cert___Administrative-Support-1024x579.jpg",
+        "path": "https://res.cloudinary.com/jokjki1c/image/upload/v1790515894/btech_admission/documents-1790515892530.jpg",
+        "uploadedAt": {
+          "$date": "2026-09-27T13:31:35.519Z"
+        }
+      },
+      {
+        "filename": "solo_parent_id___Administrative-Support-1024x579.jpg",
+        "originalName": "solo_parent_id___Administrative-Support-1024x579.jpg",
+        "path": "https://res.cloudinary.com/jokjki1c/image/upload/v1790515896/btech_admission/documents-1790515895519.jpg",
+        "uploadedAt": {
+          "$date": "2026-09-27T13:31:38.090Z"
+        }
+      },
+      {
+        "filename": "grade_11_card___Administrative-Support-1024x579.jpg",
+        "originalName": "grade_11_card___Administrative-Support-1024x579.jpg",
+        "path": "https://res.cloudinary.com/jokjki1c/image/upload/v1790515898/btech_admission/documents-1790515898090.jpg",
+        "uploadedAt": {
+          "$date": "2026-09-27T13:31:39.556Z"
+        }
+      }
+    ],
+    "isExamined": true,
+    "examStatus": "Passed",
+    "bcetRawScore": 84.0,
+    "bcetHighestScore": 100.0,
+    "examScore": 42.0,
+    "isInterviewed": true,
+    "interviewStatus": "Passed",
+    "interviewRemarks": "Passed",
+    "interviewDate": "2026-09-30",
+    "interviewLocation": "2nd Floor, BMG Building, Barrera Street, Poblacion, Baliuag, Bulacan, Philippines (3006)",
+    "interviewSession": "Afternoon",
+    "interviewTime": "Afternoon Session (1:00 PM - 4:00 PM)",
+    "interviewer": "Casuco, Florentino S.",
+    "interviewScore": 90.5,
+    "interviewRatings": {
+      "1_1": "90",
+      "1_2": "92",
+      "1_3": "88",
+      "2_1": "90",
+      "2_2": "92",
+      "2_3": "90",
+      "3_1": "88",
+      "3_2": "90",
+      "3_3": "92",
+      "4_1": "92",
+      "4_2": "90",
+      "4_3": "90"
+    },
+    "totalPerc": 87.63,
+    "isUnlocked": false
+  }
+]

@@ -1,0 +1,274 @@
+{
+  "_id": "curriculum_1st_year",
+  "year": "1st",
+  "semesters": [
+    {
+      "semester": 1,
+      "subjects": [
+        {
+          "subject_code": "CC101",
+          "title": "Introduction to Computing",
+          "lecture": 2,
+          "laboratory": 3,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "CC102",
+          "title": "Computer Programming 1",
+          "lecture": 2,
+          "laboratory": 3,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "FIL31",
+          "title": "Filipino sa Iba't Ibang Displina",
+          "lecture": 3,
+          "laboratory": 0,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "SCI75",
+          "title": "Science, Technology, and Society",
+          "lecture": 3,
+          "laboratory": 0,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "SSP83",
+          "title": "The Contemporary World",
+          "lecture": 3,
+          "laboratory": 0,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "ENG22",
+          "title": "Purposive Communication",
+          "lecture": 3,
+          "laboratory": 0,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "PFT61",
+          "title": "Movement Competency Training",
+          "lecture": 2,
+          "laboratory": 0,
+          "units": 2,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "NST51",
+          "title": "Community Relations and Development with Anti-drugs, Anti-smoking, Anti-Terrorism Education, and Peace Education",
+          "lecture": 3,
+          "laboratory": 3,
+          "units": 3,
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "semester": 2,
+      "subjects": [
+        {
+          "subject_code": "CC103",
+          "title": "Computer Programming 2 (Pre:CC102)",
+          "lecture": 2,
+          "laboratory": 3,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "ENG23",
+          "title": "Speech and Oral Communication",
+          "lecture": 3,
+          "laboratory": 0,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "MAT41",
+          "title": "Mathematics in Modern World",
+          "lecture": 3,
+          "laboratory": 0,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "CC104",
+          "title": "Data Structure and Algorithms (Pre:CC102/CC103)",
+          "lecture": 2,
+          "laboratory": 3,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "PT101",
+          "title": "Platform Technologies",
+          "lecture": 2,
+          "laboratory": 3,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "PFT62",
+          "title": "Exercise-based Fitness Activities",
+          "lecture": 2,
+          "laboratory": 0,
+          "units": 2,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "NST52",
+          "title": "Civic Welfare Training Service",
+          "lecture": 3,
+          "laboratory": 0,
+          "units": 3,
+          "prerequisites": []
+        },
+        {
+          "subject_code": "SCI71",
+          "title": "Environmental Science",
+          "lecture": 3,
+          "laboratory": 0,
+          "units": 3,
+          "prerequisites": []
+        }
+      ]
+    }
+  ],
+  "subjects": [
+    {
+      "subject_code": "CC101",
+      "title": "Introduction to Computing",
+      "lecture": 2,
+      "laboratory": 3,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "CC102",
+      "title": "Computer Programming 1",
+      "lecture": 2,
+      "laboratory": 3,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "FIL31",
+      "title": "Filipino sa Iba't Ibang Displina",
+      "lecture": 3,
+      "laboratory": 0,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "SCI75",
+      "title": "Science, Technology, and Society",
+      "lecture": 3,
+      "laboratory": 0,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "SSP83",
+      "title": "The Contemporary World",
+      "lecture": 3,
+      "laboratory": 0,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "ENG22",
+      "title": "Purposive Communication",
+      "lecture": 3,
+      "laboratory": 0,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "PFT61",
+      "title": "Movement Competency Training",
+      "lecture": 2,
+      "laboratory": 0,
+      "units": 2,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "NST51",
+      "title": "Community Relations and Development with Anti-drugs, Anti-smoking, Anti-Terrorism Education, and Peace Education",
+      "lecture": 3,
+      "laboratory": 3,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "CC103",
+      "title": "Computer Programming 2 (Pre:CC102)",
+      "lecture": 2,
+      "laboratory": 3,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "ENG23",
+      "title": "Speech and Oral Communication",
+      "lecture": 3,
+      "laboratory": 0,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "MAT41",
+      "title": "Mathematics in Modern World",
+      "lecture": 3,
+      "laboratory": 0,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "CC104",
+      "title": "Data Structure and Algorithms (Pre:CC102/CC103)",
+      "lecture": 2,
+      "laboratory": 3,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "PT101",
+      "title": "Platform Technologies",
+      "lecture": 2,
+      "laboratory": 3,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "PFT62",
+      "title": "Exercise-based Fitness Activities",
+      "lecture": 2,
+      "laboratory": 0,
+      "units": 2,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "NST52",
+      "title": "Civic Welfare Training Service",
+      "lecture": 3,
+      "laboratory": 0,
+      "units": 3,
+      "prerequisites": []
+    },
+    {
+      "subject_code": "SCI71",
+      "title": "Environmental Science",
+      "lecture": 3,
+      "laboratory": 0,
+      "units": 3,
+      "prerequisites": []
+    }
+  ]
+}

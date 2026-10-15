@@ -1,0 +1,70 @@
+{
+  "school": {
+    "name": "BALIWAG POLYTECHNIC COLLEGE",
+    "address": "Baliwag, Bulacan",
+    "title": "CERTIFICATE OF REGISTRATION",
+    "collegePledgeName": "the Institution",
+    "defaultRegistrarName": "REGISTRAR"
+  },
+  "schoolFees": {
+    "tuition": 5400,
+    "misc": 2700,
+    "miscBreakdown": [
+      {
+        "label": "Athletics:",
+        "amount": 100
+      },
+      {
+        "label": "Cultural:",
+        "amount": 100
+      },
+      {
+        "label": "Devt:",
+        "amount": 400
+      },
+      {
+        "label": "Guidance:",
+        "amount": 200
+      },
+      {
+        "label": "Handbook:",
+        "amount": 0
+      },
+      {
+        "label": "Library:",
+        "amount": 500
+      },
+      {
+        "label": "Medical/Dental:",
+        "amount": 250
+      },
+      {
+        "label": "Registration:",
+        "amount": 500
+      },
+      {
+        "label": "Com.Outreach:",
+        "amount": 450
+      },
+      {
+        "label": "ALCU:",
+        "amount": 200
+      }
+    ],
+    "computerFee": 2000,
+    "idCardFee": 0,
+    "labFee": 0
+  },
+  "paymentScheme": {
+    "totalAssessment": 10100,
+    "downPayment": 0,
+    "eligibleForRA10931": 9450,
+    "balance": 0,
+    "subsidizedByLGU": 650,
+    "backAccounts": 0
+  },
+  "texts": {
+    "optOutDisclaimer": "I am aware of the benefits and responsibilities of R.A. 10931. However, I voluntarily opt out by paying my tuition and school fees to BTech.",
+    "admissionPledge": "Upon my admission to the Baliwag Polytechnic College, I hereby pledge to abide by and comply with all rules and regulations governing student's academic performance, conduct and discipline for the attainment of the vision and mission of the institution."
+  }
+}
