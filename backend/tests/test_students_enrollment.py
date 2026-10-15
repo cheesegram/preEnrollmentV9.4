@@ -47,6 +47,10 @@ def test_preview_does_not_write(client,db):
     result=client.post('/api/students/batch-enroll-preview',json={'applicantIDs':[aid]}).json()
     assert len(result['placements'])==1
     assert result['placements'][0]['assigned_section']=='A'
+    section=result['placements'][0]['available_sections'][0]
+    assert section['blockCount']==1 and section['blockCapacity']==45
+    assert section['irregularCount']==0 and section['irregularCapacity']==5
+    assert section['displayCount']==0 and section['displayCapacity']==45
     after={name:list(db[name].find({})) for name in db.list_collection_names()}
     assert after==before
 
@@ -72,6 +76,12 @@ def test_irregular_enrollment_preserves_pairs_and_avoids_double_count(client,db)
     preview=client.post('/api/students/batch-enroll-preview',json={'applicantIDs':[aid]}).json()
     assert len(preview['placements'][0]['assigned_sections'])==3
     assert preview['placements'][0]['advisedSubjectCount']==3
+    assert preview['placements'][0]['isIrregular'] is True
+    section=preview['placements'][0]['available_sections'][0]
+    assert section['irregularCount']==1 and section['irregularCapacity']==5
+    assert section['displayCount']==0 and section['displayCapacity']==5
+    assert all(item['displayCount'] == 0 and item['displayCapacity'] == 5
+               for item in preview['placements'][0]['assigned_sections'])
     assert client.post('/api/students/batch-enroll',json={'applicantIDs':[aid]}).status_code==200
     student=db.students.find_one({'studentNumber':sn})
     assert student['irregularSection']==['B','B'] and student['irregularYear']==['2','3']

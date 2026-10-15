@@ -178,16 +178,39 @@ def plan_enrollment(store, found, groups, selected=None, direct=False):
 
 def placement_result(found, requested, plan, groups):
     chosen, student, meta = plan['chosenSection'], plan['student'], plan['irregularMeta']
+    is_irregular = text(student.get('status')).lower() == 'irregular'
     placements = [{'year': chosen['year'], 'section': chosen['section'], 'semester': chosen['semester'], 'isMain': True}]
     if meta:
         placements += [{**p, 'isMain': False} for p in meta['placementsToOccupy'] if (p['year'], p['section']) != (chosen['year'], chosen['section'])]
+    for placement in placements:
+        state = next((
+            item for item in groups.groups.get((placement['year'], placement['semester']), [])
+            if item['section'] == placement['section']
+        ), None)
+        if state:
+            placements_count = number(state.get('irregularCount')) - (1 if is_irregular else 0)
+            placement['displayCount'] = max(0, placements_count)
+            placement['displayCapacity'] = number(state.get('irregularCapacity' if is_irregular else 'blockCapacity'))
     available = []
     for state in groups.groups.get((chosen['year'], chosen['semester']), []):
-        available.append({k: state[k] for k in ['year', 'section', 'semester', 'totalCapacity', 'blockCount', 'blockCapacity', 'isExisting']})
-        available[-1]['total'] = number(state.get('blockCount')) + number(state.get('irregularCount'))
+        available.append({k: state[k] for k in [
+            'year', 'section', 'semester', 'totalCapacity',
+            'blockCount', 'blockCapacity', 'irregularCount', 'irregularCapacity', 'isExisting'
+        ]})
+        count_key = 'irregularCount' if is_irregular else 'blockCount'
+        capacity_key = 'irregularCapacity' if is_irregular else 'blockCapacity'
+        preview_reservation = (
+            1 if state['year'] == chosen['year']
+            and state['semester'] == chosen['semester']
+            and state['section'] == chosen['section']
+            else 0
+        )
+        available[-1]['displayCount'] = max(0, number(state.get(count_key)) - preview_reservation)
+        available[-1]['displayCapacity'] = number(state.get(capacity_key))
     return {'applicantID': requested, 'applicant_name': person_name(found['applicant']), 'studentNumber': found['studentNumber'],
             'assigned_section': chosen['section'], 'assigned_year': chosen['year'], 'assigned_semester': chosen['semester'],
-            'status': student['status'], 'irregularSection': student.get('irregularSection', []), 'irregularYear': student.get('irregularYear', []),
+            'status': student['status'], 'isIrregular': is_irregular,
+            'irregularSection': student.get('irregularSection', []), 'irregularYear': student.get('irregularYear', []),
             'assigned_sections': placements, 'available_sections': available, 'advisedSubjectCount': len(meta['subjectIds']) if meta else 0}
 
 

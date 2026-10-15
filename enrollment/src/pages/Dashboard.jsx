@@ -833,39 +833,45 @@ function Dashboard() {
                                                                     </button>
                                                                 </td>
                                                                 <td className="px-4 py-3 text-center">
-                                                                    <select
-                                                                        value={p.assigned_section || ""}
-                                                                        onChange={(event) => handlePreviewSectionChange(p.applicantID, event.target.value)}
-                                                                        disabled={p.status === "Irregular"}
-                                                                        className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                                                                        aria-label={`Assigned section for ${p.applicant_name}`}
-                                                                    >
-                                                                        {(p.available_sections ?? []).map((section) => (
-                                                                            <option key={`${section.year}-${section.section}-${section.semester}`} value={section.section}>
-                                                                                Section {section.year}-{section.section} ({p.status === "Block" ? `${section.blockCount}/${section.blockCapacity}` : `${section.total}/${section.totalCapacity}`})
-                                                                            </option>
-                                                                        ))}
-                                                                    </select>
-                                                                    {(() => {
-                                                                        const selectedSection = getSelectedPreviewSection(p);
-                                                                        return selectedSection ? (
-                                                                            <span className={`ml-1.5 inline-flex items-center rounded-full px-2 py-1 text-[0.65rem] font-bold ${
-                                                                                selectedSection.isExisting
-                                                                                    ? "bg-emerald-50 text-emerald-700"
-                                                                                    : "bg-amber-50 text-amber-700"
-                                                                            }`}>
-                                                                                {selectedSection.isExisting ? "Existing" : "To be Created"}
-                                                                            </span>
-                                                                        ) : null;
-                                                                    })()}
-                                                                    {getAssignedSectionsForPreview(p).length > 1 && (
-                                                                        <div className="mt-1 flex flex-wrap justify-center gap-1">
-                                                                            {getAssignedSectionsForPreview(p).slice(1).map((sectionEntry, sectionIndex) => (
-                                                                                <span key={`${p.applicantID}-${sectionEntry.section}-${sectionIndex}`} className="text-[0.65rem] text-red-700">
-                                                                                    + Section {sectionEntry.year}-{sectionEntry.section}
-                                                                                </span>
+                                                                    {p.isIrregular ? (
+                                                                        <div className="inline-flex items-center gap-2 text-xs font-semibold">
+                                                                            {p.assigned_sections.map((sectionEntry, sectionIndex) => (
+                                                                                <React.Fragment key={`${p.applicantID}-${sectionEntry.section}-${sectionIndex}`}>
+                                                                                    {sectionIndex > 0 && <span className="text-gray-400">|</span>}
+                                                                                    <span className={sectionEntry.isMain ? "text-gray-800" : "text-red-600"}>
+                                                                                        {sectionEntry.isMain ? "Section " : ""}
+                                                                                        {sectionEntry.year}-{sectionEntry.section} ({sectionEntry.displayCount}/{sectionEntry.displayCapacity})
+                                                                                    </span>
+                                                                                </React.Fragment>
                                                                             ))}
                                                                         </div>
+                                                                    ) : (
+                                                                        <>
+                                                                            <select
+                                                                                value={p.assigned_section || ""}
+                                                                                onChange={(event) => handlePreviewSectionChange(p.applicantID, event.target.value)}
+                                                                                className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                                                                                aria-label={`Assigned section for ${p.applicant_name}`}
+                                                                            >
+                                                                                {(p.available_sections ?? []).map((section) => (
+                                                                                    <option key={`${section.year}-${section.section}-${section.semester}`} value={section.section}>
+                                                                                        Section {section.year}-{section.section} ({section.displayCount}/{section.displayCapacity})
+                                                                                    </option>
+                                                                                ))}
+                                                                            </select>
+                                                                            {(() => {
+                                                                                const selectedSection = getSelectedPreviewSection(p);
+                                                                                return selectedSection ? (
+                                                                                    <span className={`ml-1.5 inline-flex items-center rounded-full px-2 py-1 text-[0.65rem] font-bold ${
+                                                                                        selectedSection.isExisting
+                                                                                            ? "bg-emerald-50 text-emerald-700"
+                                                                                            : "bg-amber-50 text-amber-700"
+                                                                                    }`}>
+                                                                                        {selectedSection.isExisting ? "Existing" : "To be Created"}
+                                                                                    </span>
+                                                                                ) : null;
+                                                                            })()}
+                                                                        </>
                                                                     )}
                                                                 </td>
                                                             </tr>
