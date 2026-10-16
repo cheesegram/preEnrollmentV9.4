@@ -650,9 +650,6 @@ function StudentsTable({
               endY,
               sourceZone: sourceAnchor.zone,
               targetZone: targetAnchor.zone,
-              behindZones:
-                (sourceAnchor.zone === "Previous" && targetAnchor.zone === "Upcoming") ||
-                (sourceAnchor.zone === "Upcoming" && targetAnchor.zone === "Previous"),
             });
           });
         });
@@ -728,9 +725,10 @@ function StudentsTable({
         return curriculumDoc;
       };
 
-      const currentYearDocument = await getCurriculumDocument(yearNumber);
-      const upcomingYear = semesterIndex === 0 ? yearNumber : yearNumber + 1;
-      const upcomingSemester = semesterIndex === 0 ? 1 : 0;
+      const isIrregular = String(selectedStudent?.status ?? "").trim().toLowerCase() === "irregular";
+      const currentYearDocument = isIrregular
+        ? null
+        : await getCurriculumDocument(yearNumber);
       const previousPeriods = [];
 
       for (let year = 1; year <= yearNumber; year += 1) {
@@ -746,14 +744,54 @@ function StudentsTable({
       const previousDocumentsByYear = new Map(
         [...new Set(previousPeriods.map((period) => period.year))].map((year, index) => [year, previousDocuments[index]])
       );
-      const upcomingDocument = await Promise.all([
-        upcomingYear <= 4 ? getCurriculumDocument(upcomingYear) : null,
-      ]).then(([document]) => document);
 
       const getSubjects = (document, semester) => {
         const subjects = document?.semesters?.[semester]?.subjects;
         return Array.isArray(subjects) ? subjects : [];
       };
+
+      let currentColumns;
+      if (isIrregular) {
+        const curriculumResults = await Promise.allSettled(
+          [1, 2, 3, 4].map((year) => getCurriculumDocument(year))
+        );
+        const subjectsByCode = new Map();
+
+        curriculumResults.forEach((result, yearIndex) => {
+          if (result.status !== "fulfilled" || !result.value) return;
+          const document = result.value;
+          [0, 1].forEach((semester) => {
+            getSubjects(document, semester).forEach((subject) => {
+              const code = String(subject?.subject_code || subject?.code || "").trim().toLowerCase();
+              if (code && !subjectsByCode.has(code)) {
+                subjectsByCode.set(code, { year: yearIndex + 1, semester });
+              }
+            });
+          });
+        });
+
+        const subjectsByPeriod = new Map();
+        selectedSubjectSubjects.forEach((subject) => {
+          const code = String(subject?.subject_code || subject?.code || "").trim().toLowerCase();
+          const period = subjectsByCode.get(code) || { year: yearNumber, semester: semesterIndex };
+          const periodKey = `${period.year}-${period.semester}`;
+          if (!subjectsByPeriod.has(periodKey)) {
+            subjectsByPeriod.set(periodKey, {
+              year: period.year,
+              semester: period.semester,
+              subjects: [],
+            });
+          }
+          subjectsByPeriod.get(periodKey).subjects.push(subject);
+        });
+        currentColumns = [...subjectsByPeriod.values()];
+      } else {
+        currentColumns = [{
+          year: yearNumber,
+          semester: semesterIndex,
+          subjects: getSubjects(currentYearDocument, semesterIndex),
+        }];
+      }
 
       setCurriculumMapping([
         {
@@ -768,24 +806,10 @@ function StudentsTable({
         },
         {
           label: "Current",
-          columns: [{
-            year: yearNumber,
-            semester: semesterIndex,
-            subjects: getSubjects(currentYearDocument, semesterIndex),
-          }],
+          columns: currentColumns,
           borderClass: "border-emerald-500",
           headerClass: "bg-emerald-50 text-emerald-900",
         },
-        ...(upcomingYear <= 4 ? [{
-          label: "Upcoming",
-          columns: [{
-            year: upcomingYear,
-            semester: upcomingSemester,
-            subjects: getSubjects(upcomingDocument, upcomingSemester),
-          }],
-          borderClass: "border-yellow-400",
-          headerClass: "bg-yellow-50 text-yellow-900",
-        }] : []),
       ]);
     } catch (error) {
       setSubjectError(error.response?.data?.message || error.message || "Failed to load curriculum mapping.");
