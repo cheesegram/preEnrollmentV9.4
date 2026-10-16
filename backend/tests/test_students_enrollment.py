@@ -83,6 +83,8 @@ def test_irregular_enrollment_preserves_pairs_and_avoids_double_count(client,db)
     assert section['displayCount']==0 and section['displayCapacity']==5
     assert all(item['displayCount'] == 0 and item['displayCapacity'] == 5
                for item in preview['placements'][0]['assigned_sections'])
+    assert all(item['capacityAdjusted'] is False
+               for item in preview['placements'][0]['assigned_sections'])
     assert client.post('/api/students/batch-enroll',json={'applicantIDs':[aid]}).status_code==200
     student=db.students.find_one({'studentNumber':sn})
     assert student['irregularSection']==['B','B'] and student['irregularYear']==['2','3']
@@ -104,6 +106,10 @@ def test_full_irregular_placement_borrows_block_capacity(client,db,student):
     db.sections.insert_one({'year':'2','section':'B','semester':'1st','blockCount':11,'irregularCount':1,
                             'blockCapacity':15,'irregularCapacity':1,'totalCapacity':16})
     before=db.students.count_documents({})
+    preview=client.post('/api/students/batch-enroll-preview',json={'applicantIDs':[aid]}).json()
+    adjusted = next(item for item in preview['placements'][0]['assigned_sections']
+                     if item['year']=='2' and item['section']=='B')
+    assert adjusted['capacityAdjusted'] is True
     result=client.post('/api/students/batch-enroll',json={'applicantIDs':[aid]}).json()
     assert len(result['enrolled'])==1
     assert db.students.count_documents({})==before+1

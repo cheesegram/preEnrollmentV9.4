@@ -129,6 +129,7 @@ def make_irregular_room(state):
     irregular_capacity = number(state.get('irregularCapacity'))
     required = max(0, irregular_count - irregular_capacity + 1)
     if required == 0:
+        state['_irregularCapacityAdjusted'] = False
         return True
     block_capacity = number(state.get('blockCapacity'))
     if block_capacity < required:
@@ -136,6 +137,7 @@ def make_irregular_room(state):
     state['blockCapacity'] = block_capacity - required
     state['irregularCapacity'] = irregular_capacity + required
     state['totalCapacity'] = number(state.get('totalCapacity')) or block_capacity + irregular_capacity
+    state['_irregularCapacityAdjusted'] = True
     return True
 
 
@@ -208,6 +210,7 @@ def placement_result(found, requested, plan, groups):
             placements_count = number(state.get('irregularCount')) - (1 if is_irregular else 0)
             placement['displayCount'] = max(0, placements_count)
             placement['displayCapacity'] = number(state.get('irregularCapacity' if is_irregular else 'blockCapacity'))
+            placement['capacityAdjusted'] = bool(state.get('_irregularCapacityAdjusted'))
     available = []
     for state in groups.groups.get((chosen['year'], chosen['semester']), []):
         available.append({k: state[k] for k in [

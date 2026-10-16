@@ -875,6 +875,11 @@ function Dashboard() {
                                                                                         {sectionEntry.isMain ? "Section " : ""}
                                                                                         {sectionEntry.year}-{sectionEntry.section} ({sectionEntry.displayCount}/{sectionEntry.displayCapacity})
                                                                                     </span>
+                                                                                    {sectionEntry.capacityAdjusted && (
+                                                                                        <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-1 text-[0.65rem] font-bold text-amber-700">
+                                                                                            To be adjusted
+                                                                                        </span>
+                                                                                    )}
                                                                                 </React.Fragment>
                                                                             ))}
                                                                         </div>
@@ -988,7 +993,12 @@ function Dashboard() {
                                                                 Curriculum
                                                             </button>
                                                         </td>
-                                                        <td className="px-6 py-4 text-center text-gray-700">{applicant.isIrregular === true ? "Confirmed | Irregular" : (applicant.status || '-')}</td>
+                                                        <td className="px-6 py-4 text-center text-gray-700">
+                                                            {applicant.isIrregular === true ||
+                                                            String(applicant.status ?? "").trim().toLowerCase() === "irregular"
+                                                                ? "Irregular"
+                                                                : "Regular"}
+                                                        </td>
                                                         <td className="px-6 py-4 text-center">
                                                             <button
                                                                 type="button"
