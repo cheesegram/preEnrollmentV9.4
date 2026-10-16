@@ -1400,7 +1400,7 @@ function StudentsTable({
                           className={`relative z-40 shrink-0 rounded-xl border-2 bg-white/70 p-3  ${zone.borderClass}`}
                         >
                           <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-700">{zone.label}</p>
-                          <div className="flex max-w-full items-start gap-3 overflow-x-auto pb-1">
+                          <div className={`flex max-w-full items-start gap-3 pb-1 ${zone.label === "Current" ? "flex-col" : "overflow-x-auto"}`}>
                             {zone.columns.map((column) => (
                               <div key={`${zone.label}-${column.year}-${column.semester}`} className="w-fit max-w-full shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white">
                                 <div className={`w-fit max-w-full whitespace-nowrap border-b px-4 py-3 ${zone.headerClass}`}>

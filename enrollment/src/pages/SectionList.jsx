@@ -6,6 +6,7 @@ import PageHeader from "../components/ui/PageHeader";
 import Panel from "../components/ui/Panel";
 import SearchInput from "../components/ui/SearchInput";
 import api from "../lib/axios";
+import { getOverallStatus, getSectionStatus } from "../utils/sectionStatus";
 
 const STATUS_OPTIONS = ["All", "Available", "Full", "Overloaded"];
 const YEAR_OPTIONS = ["All Year", "1", "2", "3", "4"];
@@ -69,7 +70,13 @@ function SectionList() {
     }
 
     if (selectedStatus !== "All") {
-      result = result.filter((item) => item.status === selectedStatus);
+      result = result.filter((item) => {
+        const blockCount = Number(item.blockCount ?? item.regular ?? 0);
+        const irregularCount = Number(item.irregularCount ?? item.irregular ?? 0);
+        const blockCapacity = Number(item.blockCapacity ?? item.regularCapacity ?? 45);
+        const irregularCapacity = Number(item.irregularCapacity ?? 5);
+        return getOverallStatus(blockCount, blockCapacity, irregularCount, irregularCapacity) === selectedStatus;
+      });
     }
 
     if (selectedYear !== "All Year") {
@@ -123,6 +130,12 @@ function SectionList() {
             irregularCapacity: Number(section.irregularCapacity ?? 5),
             totalCapacity: Number(section.totalCapacity ?? 50),
             total: Number(section.blockCount ?? section.regular ?? 0) + Number(section.irregularCount ?? section.irregular ?? 0),
+            status: getSectionStatus(
+              Number(section.blockCount ?? section.regular ?? 0),
+              Number(section.blockCapacity ?? section.regularCapacity ?? 45),
+              Number(section.irregularCount ?? section.irregular ?? 0),
+              Number(section.irregularCapacity ?? 5)
+            ),
           }))
           .filter((section) => section.blockCount > 0 || section.irregularCount > 0);
 
@@ -177,6 +190,12 @@ function SectionList() {
         irregularCapacity: Number(section.irregularCapacity ?? 5),
         totalCapacity: Number(section.totalCapacity ?? 50),
         total: Number(section.blockCount ?? section.regular ?? 0) + Number(section.irregularCount ?? section.irregular ?? 0),
+        status: getSectionStatus(
+          Number(section.blockCount ?? section.regular ?? 0),
+          Number(section.blockCapacity ?? section.regularCapacity ?? 45),
+          Number(section.irregularCount ?? section.irregular ?? 0),
+          Number(section.irregularCapacity ?? 5)
+        ),
       })).filter((section) => section.blockCount > 0 || section.irregularCount > 0));
     } catch (error) {
       console.error("Failed to refresh sections after student move", error);

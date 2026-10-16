@@ -4,14 +4,7 @@ import toast from "react-hot-toast";
 import Pagination from "./ui/Pagination";
 import StudentsTable from "./StudentsTable";
 import api from "../lib/axios";
-
-function getCapacityStateStyle(count, capacity) {
-  const currentCount = Number(count || 0);
-  const cap = Number(capacity || 0);
-  if (currentCount >= cap) return "bg-red-100 text-red-700 font-bold";
-  if (currentCount >= cap * 0.8) return "bg-yellow-100 text-yellow-700 font-bold";
-  return "bg-green-100 text-green-700 font-bold";
-}
+import { getCapacityStateStyle, getSectionStatus } from "../utils/sectionStatus";
 
 function SectionTable({ sections, students, allSections = sections, onStudentsChanged, onSectionsChanged, className = "" }) {
   const [studentListSection, setStudentListSection] = useState(null);
@@ -155,6 +148,7 @@ function SectionTable({ sections, students, allSections = sections, onStudentsCh
                 const blockCount = Number(sec.blockCount ?? sec.regular ?? 0);
                 const irregularCount = Number(sec.irregularCount ?? sec.irregular ?? 0);
                 const total = blockCount + irregularCount;
+                const status = getSectionStatus(blockCount, blockCapacity, irregularCount, irregularCapacity);
 
                 return (
                   <tr key={sec._id || `${sec.year}-${sec.section}-${sec.semester}`} className="hover:bg-emerald-50/60 transition-colors">
@@ -185,7 +179,7 @@ function SectionTable({ sections, students, allSections = sections, onStudentsCh
                     <td className="px-5 py-4 text-center">{sec.totalCapacity}</td>
                     <td className="px-5 py-4 text-center">
                       <span className="inline-flex items-center justify-center rounded-full px-4 py-1.5 text-xs tracking-wide bg-gray-100 text-gray-700 font-bold">
-                        {sec.status || "Unknown"}
+                        {status}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-center">
