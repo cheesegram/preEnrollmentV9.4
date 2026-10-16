@@ -221,30 +221,41 @@ def sync_student_changes(store, *students):
         sync_one(store, item, counts)
 
 
-def rebalance(store, year, term, preferred=None):
+def rebalance(store, year, term, preferred=None, capacity_template=None):
     query = {'year': text(year), 'semester': semester(term)}
     sections = list(store['sections'].find(query))
     sections.sort(key=lambda s: (s['section'] != preferred if preferred else False, section_index(s['section'])))
     source = sections[0] if sections else create_state(year, term, 'A')
-    students = list(store['students'].find({**query, 'status': {'$in': ['Block', 'Irregular']}}).sort('studentNumber', 1))
+    students = list(store['students'].find({**query, 'status': 'Block'}).sort('studentNumber', 1))
     if not students:
-        store['sections'].delete_many(query)
-        state = create_state(year, term, 'A', source)
-        state.pop('isExisting', None)
-        state['_id'] = store['sections'].insert_one(state).inserted_id
-        return [state]
-    caps = capacities_from(source) or DEFAULT_CAPACITIES
+        sync_all(store)
+        return list(store['sections'].find(query).sort('section', 1))
+    caps = capacities_from(capacity_template) or capacities_from(source) or DEFAULT_CAPACITIES
     for status, field in [('Block', 'blockCapacity'), ('Irregular', 'irregularCapacity')]:
         if any(s['status'] == status for s in students) and caps[field] <= 0:
             fail(409, f'Cannot auto-section {status} students with zero {field}')
     needed = max(1, *(math.ceil(sum(s['status'] == status for s in students) / max(.001, caps[field]))
                        for status, field in [('Block', 'blockCapacity'), ('Irregular', 'irregularCapacity')]))
-    working = [create_state(year, term, s['section'], source) for s in sections[:needed]]
+    counts = actual_counts(store)
+    irregular_sections = [
+        section for section in sections
+        if counts.get(identity_key(section), {}).get('irregularCount', 0) > 0
+    ]
+    selected_sections = irregular_sections + [
+        section for section in sections[:needed]
+        if section not in irregular_sections
+    ]
+    working = []
+    for section in selected_sections:
+        state = create_state(year, term, section['section'], section)
+        section_counts = counts.get(identity_key(section), {})
+        state['irregularCount'] = section_counts.get('irregularCount', 0)
+        working.append(state)
     used = {s['section'] for s in working}
     while len(working) < needed:
         name = next_name(used)
         used.add(name)
-        working.append(create_state(year, term, name, source))
+        working.append(create_state(year, term, name, caps))
     for student in students:
         for state in working:
             if has_capacity(state, student['status']):
@@ -254,6 +265,11 @@ def rebalance(store, year, term, preferred=None):
     # Preserve cross-year placements rather than deleting an externally occupied section.
     for state in working:
         item = identity(*identity_key(state))
-        store['sections'].update_one(item, {'$set': {**caps, 'updatedAt': utcnow()}, '$setOnInsert': {'createdAt': utcnow()}}, upsert=True)
+        state_caps = {
+            'blockCapacity': state['blockCapacity'],
+            'irregularCapacity': state['irregularCapacity'],
+            'totalCapacity': state['totalCapacity'],
+        }
+        store['sections'].update_one(item, {'$set': {**state_caps, 'updatedAt': utcnow()}, '$setOnInsert': {'createdAt': utcnow()}}, upsert=True)
     sync_all(store)
     return list(store['sections'].find(query).sort('section', 1))

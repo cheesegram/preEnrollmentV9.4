@@ -63,25 +63,64 @@ def capacity_all(request: Request, body: dict = Body(...)):
     store = request.app.state.store
     with store.write():
         sections = list(store['sections'].find(query))
+        current_counts = actual_counts(store)
+        adjusted_caps = {}
+        for section in sections:
+            section_key = identity_key(section)
+            counts = current_counts.get(identity_key(section), {})
+            irregular_count = counts.get('irregularCount', section.get('irregularCount', 0))
+            irregular_capacity = caps['irregularCapacity']
+            block_capacity = caps['blockCapacity']
+            if irregular_count > irregular_capacity:
+                shortage = irregular_count - irregular_capacity
+                irregular_capacity = irregular_count
+                block_capacity = max(0, block_capacity - shortage)
+            adjusted_caps[section_key] = {
+                'blockCapacity': block_capacity,
+                'irregularCapacity': irregular_capacity,
+                'totalCapacity': block_capacity + irregular_capacity,
+            }
         if auto:
             groups = {(s['year'], s['semester']) for s in sections}
             for year, term in groups:
-                for status, field in [('Block', 'blockCapacity'), ('Irregular', 'irregularCapacity')]:
-                    require(caps[field] > 0 or not store['students'].find_one({'year': year, 'semester': term, 'status': status}),
-                            f'Cannot auto-section {status} students with zero {field}', 409)
-        result = store['sections'].update_many(query, {'$set': {**caps, 'updatedAt': utcnow()}})
+                require(
+                    any(adjusted_caps[identity_key(s)]['blockCapacity'] > 0 for s in sections
+                        if s['year'] == year and s['semester'] == term)
+                    or not store['students'].find_one({'year': year, 'semester': term, 'status': 'Block'}),
+                    'Cannot auto-section Block students with zero block capacity', 409
+                )
+        modified = 0
+        for section in sections:
+            modified += store['sections'].update_one(
+                {'_id': section['_id']},
+                {'$set': {**adjusted_caps[identity_key(section)], 'updatedAt': utcnow()}},
+            ).modified_count
         rebalanced = []
         if auto:
             groups = {}
             for s in sections:
                 groups.setdefault((s['year'], s['semester']), s['section'])
             for (year, term), preferred in groups.items():
-                rebalanced.extend(rebalance(store, year, term, preferred if targets else None))
+                rebalanced.extend(rebalance(
+                    store,
+                    year,
+                    term,
+                    preferred if targets else None,
+                    caps,
+                ))
+            for section in sections:
+                store['sections'].update_one(
+                    identity(*identity_key(section)),
+                    {'$set': {**adjusted_caps[identity_key(section)], 'updatedAt': utcnow()}},
+                )
         else:
             for section in sections:
-                store['sections'].update_one({'_id': section['_id']}, {'$set': {'status': section_status(section.get('blockCount'), section.get('irregularCount'), caps['totalCapacity'])}})
-        updated = list(store['sections'].find(query)) if targets else rebalanced if auto else list(store['sections'].find({}))
-    return respond({'message': 'All sections capacity updated successfully', 'modified': result.modified_count,
+                section_caps = adjusted_caps[identity_key(section)]
+                store['sections'].update_one({'_id': section['_id']}, {'$set': {
+                    'status': section_status(section.get('blockCount'), section.get('irregularCount'), section_caps['totalCapacity'])
+                }})
+        updated = list(store['sections'].find(query)) if targets else list(store['sections'].find({}))
+    return respond({'message': 'All sections capacity updated successfully', 'modified': modified,
                     'rebalanced': len(rebalanced), 'autoSectioningApplied': auto, 'sections': updated})
 
 

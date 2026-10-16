@@ -54,6 +54,142 @@ def test_capacity_without_auto_preserves_placements(client,db,student):
     assert client.patch('/api/sections/capacity/all',json={'targetSections':[]}).status_code==400
 
 
+def test_capacity_change_preserves_irregular_sections_and_borrows_block_capacity(client, db, student, section):
+    irregular = {**student, 'status': 'Irregular', 'section': 'A', 'irregularSection': ['A'], 'irregularYear': ['1']}
+    second_year_student = {**student, 'year': '2', 'studentNumber': 'year-2-block'}
+    second_year_irregular = {
+        **second_year_student,
+        'status': 'Irregular',
+        'irregularSection': ['A'],
+        'irregularYear': ['2'],
+        'studentNumber': 'year-2-irregular',
+    }
+    db.students.insert_many([
+        {**irregular, 'studentNumber': 'irregular-1'},
+        {**irregular, 'studentNumber': 'irregular-2'},
+        {**student, 'studentNumber': 'block-1'},
+        second_year_student,
+        second_year_irregular,
+    ])
+    db.sections.insert_one({**section, 'section': 'A', 'blockCount': 1, 'irregularCount': 2})
+    db.sections.insert_one({**section, 'year': '2', 'section': 'A', 'blockCount': 1, 'irregularCount': 1})
+    client.post('/api/sections/sync')
+
+    result = client.patch('/api/sections/capacity/all', json={
+        'blockCapacity': 10,
+        'irregularCapacity': 1,
+        'applyAutoSectioning': True,
+    })
+
+    assert result.status_code == 200
+    updated = db.sections.find_one({'year': '1', 'semester': '1st', 'section': 'A'})
+    assert updated['blockCapacity'] == 9
+    assert updated['irregularCapacity'] == 2
+    assert updated['totalCapacity'] == 11
+    assert db.students.find_one({'studentNumber': 'irregular-1'})['section'] == 'A'
+    assert db.students.find_one({'studentNumber': 'irregular-2'})['section'] == 'A'
+    updated_second = db.sections.find_one({'year': '2', 'semester': '1st', 'section': 'A'})
+    assert updated_second['blockCapacity'] == 10
+    assert updated_second['irregularCapacity'] == 1
+    assert db.students.find_one({'studentNumber': 'year-2-irregular'})['section'] == 'A'
+
+    result = client.patch('/api/sections/capacity/all', json={
+        'blockCapacity': 8,
+        'irregularCapacity': 1,
+        'applyAutoSectioning': False,
+    })
+    assert result.status_code == 200
+    updated = db.sections.find_one({'year': '1', 'semester': '1st', 'section': 'A'})
+    assert updated['blockCapacity'] == 7
+    assert updated['irregularCapacity'] == 2
+    assert db.students.find_one({'studentNumber': 'irregular-1'})['section'] == 'A'
+    assert db.students.find_one({'studentNumber': 'irregular-2'})['section'] == 'A'
+    updated_second = db.sections.find_one({'year': '2', 'semester': '1st', 'section': 'A'})
+    assert updated_second['blockCapacity'] == 8
+    assert updated_second['irregularCapacity'] == 1
+
+
+def test_capacity_change_does_not_propagate_borrowed_capacity_to_same_year_sections(client, db, student, section):
+    irregular_a = {**student, 'status': 'Irregular', 'section': 'A', 'irregularSection': ['A'], 'irregularYear': ['1'],
+                   'studentNumber': 'irregular-a'}
+    irregular_b = {**student, 'status': 'Irregular', 'section': 'B', 'irregularSection': ['B'], 'irregularYear': ['1'],
+                   'studentNumber': 'irregular-b'}
+    db.students.insert_many([
+        irregular_a,
+        {**irregular_a, 'studentNumber': 'irregular-a-2'},
+        irregular_b,
+        {**student, 'studentNumber': 'block-a'},
+        {**student, 'section': 'B', 'studentNumber': 'block-b'},
+    ])
+    db.sections.insert_many([
+        {**section, 'section': 'A', 'blockCount': 1, 'irregularCount': 2},
+        {**section, 'section': 'B', 'blockCount': 1, 'irregularCount': 1},
+    ])
+    client.post('/api/sections/sync')
+
+    result = client.patch('/api/sections/capacity/all', json={
+        'blockCapacity': 10,
+        'irregularCapacity': 1,
+        'applyAutoSectioning': True,
+    })
+
+    assert result.status_code == 200
+    updated_a = db.sections.find_one({'year': '1', 'semester': '1st', 'section': 'A'})
+    updated_b = db.sections.find_one({'year': '1', 'semester': '1st', 'section': 'B'})
+    assert (updated_a['blockCapacity'], updated_a['irregularCapacity']) == (9, 2)
+    assert (updated_b['blockCapacity'], updated_b['irregularCapacity']) == (10, 1)
+    response_sections = {item['section']: item for item in result.json()['sections']}
+    assert (response_sections['A']['blockCapacity'], response_sections['A']['irregularCapacity']) == (9, 2)
+    assert (response_sections['B']['blockCapacity'], response_sections['B']['irregularCapacity']) == (10, 1)
+
+
+def test_capacity_change_restores_sibling_capacity_after_auto_sectioning(client, db, student, section):
+    irregular_a = {**student, 'status': 'Irregular', 'section': 'A', 'irregularSection': ['A'], 'irregularYear': ['1'],
+                   'studentNumber': 'irregular-a'}
+    block_students = [
+        {**student, 'studentNumber': f'block-{index}', 'section': 'B' if index > 0 else 'A'}
+        for index in range(10)
+    ]
+    db.students.insert_many([irregular_a, {**irregular_a, 'studentNumber': 'irregular-a-2'}, *block_students])
+    db.sections.insert_many([
+        {**section, 'section': 'A', 'blockCount': 1, 'irregularCount': 2},
+        {**section, 'section': 'B', 'blockCount': 9, 'irregularCount': 0},
+    ])
+    client.post('/api/sections/sync')
+
+    result = client.patch('/api/sections/capacity/all', json={
+        'blockCapacity': 10,
+        'irregularCapacity': 1,
+        'applyAutoSectioning': True,
+    })
+
+    assert result.status_code == 200
+    updated_a = db.sections.find_one({'year': '1', 'semester': '1st', 'section': 'A'})
+    updated_b = db.sections.find_one({'year': '1', 'semester': '1st', 'section': 'B'})
+    assert (updated_a['blockCapacity'], updated_a['irregularCapacity']) == (9, 2)
+    assert (updated_b['blockCapacity'], updated_b['irregularCapacity']) == (10, 1)
+
+
+def test_new_auto_section_uses_requested_capacity_not_adjusted_section_capacity(client, db, student, section):
+    irregular = {**student, 'status': 'Irregular', 'section': 'A', 'irregularSection': ['A'], 'irregularYear': ['1'],
+                 'studentNumber': 'irregular-a'}
+    blocks = [{**student, 'studentNumber': f'block-{index}', 'section': 'A'} for index in range(20)]
+    db.students.insert_many([irregular, {**irregular, 'studentNumber': 'irregular-a-2'}, *blocks])
+    db.sections.insert_one({**section, 'section': 'A', 'blockCount': 20, 'irregularCount': 2})
+    client.post('/api/sections/sync')
+
+    result = client.patch('/api/sections/capacity/all', json={
+        'blockCapacity': 10,
+        'irregularCapacity': 1,
+        'applyAutoSectioning': True,
+    })
+
+    assert result.status_code == 200
+    sections = {item['section']: item for item in result.json()['sections']}
+    assert (sections['A']['blockCapacity'], sections['A']['irregularCapacity']) == (9, 2)
+    assert (sections['B']['blockCapacity'], sections['B']['irregularCapacity']) == (10, 1)
+
+
 def test_curriculum_shapes_and_string_ids(client,db):
     data={'_id':'wrong','semesters':[{'semester':1,'subjects':[{'subject_code':'CC101','title':'Introduction to Computing','units':3}]}]}
     result=client.post('/api/curriculum',json={'year':'First','data':data})
