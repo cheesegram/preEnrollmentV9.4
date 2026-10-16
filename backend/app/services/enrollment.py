@@ -124,6 +124,21 @@ def irregular_meta(record, term):
             'subjectIds': unique(s['subjectId'] for s in advised), 'advisedSubjects': advised}
 
 
+def make_irregular_room(state):
+    irregular_count = number(state.get('irregularCount'))
+    irregular_capacity = number(state.get('irregularCapacity'))
+    required = max(0, irregular_count - irregular_capacity + 1)
+    if required == 0:
+        return True
+    block_capacity = number(state.get('blockCapacity'))
+    if block_capacity < required:
+        return False
+    state['blockCapacity'] = block_capacity - required
+    state['irregularCapacity'] = irregular_capacity + required
+    state['totalCapacity'] = number(state.get('totalCapacity')) or block_capacity + irregular_capacity
+    return True
+
+
 def plan_enrollment(store, found, groups, selected=None, direct=False):
     applicant, record = found['applicant'], found.get('advisingRecord')
     student_number = found['studentNumber']
@@ -154,6 +169,8 @@ def plan_enrollment(store, found, groups, selected=None, direct=False):
             return {'ok': False, 'reason': 'invalid_advising_record', 'message': 'Enrollment blocked: Advising record must include year, section and advised subjects'}
         for placement in meta['placementsToOccupy']:
             state = groups.ensure(placement['year'], term, placement['section'])
+            if not make_irregular_room(state):
+                return {'ok': False, 'reason': 'section_full', 'message': f"Enrollment blocked: Irregular section {placement['year']}-{placement['section']} is full"}
             if not has_capacity(state, 'Irregular'):
                 return {'ok': False, 'reason': 'section_full', 'message': f"Enrollment blocked: Irregular section {placement['year']}-{placement['section']} is full"}
         chosen = groups.ensure(meta['baseYear'], term, meta['baseSection'])

@@ -94,7 +94,25 @@ def test_irregular_enrollment_preserves_pairs_and_avoids_double_count(client,db)
     assert db.sections.count_documents({})==0
 
 
-def test_full_irregular_placement_blocks_without_reserving(client,db,student):
+def test_full_irregular_placement_borrows_block_capacity(client,db,student):
+    aid,_=advising_candidate(db,irregular=True)
+    db.students.insert_one({**student,'studentNumber':'occupied','year':'2','section':'B','status':'Irregular'})
+    db.students.insert_many([
+        {**student, 'studentNumber': f'block-{index}', 'year': '2', 'section': 'B', 'status': 'Block'}
+        for index in range(11)
+    ])
+    db.sections.insert_one({'year':'2','section':'B','semester':'1st','blockCount':11,'irregularCount':1,
+                            'blockCapacity':15,'irregularCapacity':1,'totalCapacity':16})
+    before=db.students.count_documents({})
+    result=client.post('/api/students/batch-enroll',json={'applicantIDs':[aid]}).json()
+    assert len(result['enrolled'])==1
+    assert db.students.count_documents({})==before+1
+    section=db.sections.find_one({'year':'2','section':'B'})
+    assert section['blockCount']==11 and section['blockCapacity']==14
+    assert section['irregularCount']==2 and section['irregularCapacity']==2
+
+
+def test_full_irregular_placement_blocks_without_block_capacity(client,db,student):
     aid,_=advising_candidate(db,irregular=True)
     db.students.insert_one({**student,'studentNumber':'occupied','year':'2','section':'B','status':'Irregular'})
     db.sections.insert_one({'year':'2','section':'B','semester':'1st','blockCapacity':0,'irregularCapacity':1,'totalCapacity':1})
