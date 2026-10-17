@@ -210,6 +210,8 @@ def move(request: Request, body: dict = Body(...)):
         students = [store['students'].find_one(id_filter(i)) for i in ids]
         require(all(s and text(s.get('year')) == item['year'] and semester(s.get('semester')) == item['semester'] for s in students),
                 'Some selected students do not match the target year and semester')
+        require(not any(text(s.get('status')).lower() == 'irregular' for s in students),
+                'Irregular students must remain in their original section')
         incoming = [s for s in students if section_name(s.get('section')) != item['section']]
         block = sum(s.get('status') != 'Irregular' for s in incoming)
         irregular = len(incoming) - block

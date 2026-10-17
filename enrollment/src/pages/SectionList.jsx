@@ -22,6 +22,7 @@ function SectionList() {
   const [capacityValue, setCapacityValue] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [previewData, setPreviewData] = useState(null);
+  const [previewSection, setPreviewSection] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [manualMode, setManualMode] = useState(false);
   const [manualBlockCapacity, setManualBlockCapacity] = useState("");
@@ -41,6 +42,142 @@ function SectionList() {
   const handleToggleAllSections = (checked) => {
     setTargetSectionKeys(checked ? allTargetSectionKeys : []);
   };
+
+  const getPreviewStudentSection = (student) => {
+    const year = String(student.year ?? "").trim();
+    const semester = String(student.semester ?? "").trim();
+    const section = String(student.section ?? "").trim().toUpperCase();
+    return `${year}::${section}::${semester}`;
+  };
+
+  const getPreviewIrregularSectionKeys = (student) => {
+    const sectionsForStudent = Array.isArray(student.irregularSection) ? student.irregularSection : [];
+    const yearsForStudent = Array.isArray(student.irregularYear) ? student.irregularYear : [];
+    const semester = String(student.semester ?? "").trim();
+    return sectionsForStudent.map((section, index) => (
+      `${String(yearsForStudent[index] ?? yearsForStudent[0] ?? "").trim()}::${String(section ?? "").trim().toUpperCase()}::${semester}`
+    ));
+  };
+
+  const projectedSections = useMemo(() => {
+    if (!previewData) return [];
+
+    const targetKeys = new Set(
+      previewData.allSections ? sections.map(getSectionKey) : previewData.targetSections.map(getSectionKey)
+    );
+    const projected = sections.map((section) => {
+      const key = getSectionKey(section);
+      const sectionStudents = students.filter((student) => {
+        const isIrregular = String(student.status ?? "").trim().toLowerCase() === "irregular";
+        return isIrregular
+          ? getPreviewIrregularSectionKeys(student).includes(key)
+          : getPreviewStudentSection(student) === key;
+      });
+      const irregularCount = sectionStudents.filter(
+        (student) => String(student.status ?? "").trim().toLowerCase() === "irregular"
+      ).length;
+      const isTarget = targetKeys.has(key);
+      const requestedBlockCapacity = isTarget
+        ? Number(previewData.blockCapacity)
+        : Number(section.blockCapacity ?? section.regularCapacity ?? 45);
+      const requestedIrregularCapacity = isTarget
+        ? Number(previewData.irregularCapacity)
+        : Number(section.irregularCapacity ?? 5);
+      const irregularShortage = Math.max(0, irregularCount - requestedIrregularCapacity);
+
+      return {
+        ...section,
+        previewKey: key,
+        students: sectionStudents,
+        blockCapacity: requestedBlockCapacity - irregularShortage,
+        irregularCapacity: requestedIrregularCapacity + irregularShortage,
+        blockStudents: sectionStudents.filter(
+          (student) => String(student.status ?? "").trim().toLowerCase() !== "irregular"
+        ),
+        irregularStudents: sectionStudents.filter(
+          (student) => String(student.status ?? "").trim().toLowerCase() === "irregular"
+        ),
+      };
+    });
+
+    if (!previewData.applyAutoSectioning) {
+      return projected
+        .filter((section) => section.students.length > 0)
+        .sort((left, right) => {
+          const yearDifference = Number(left.year) - Number(right.year);
+          if (yearDifference !== 0) return yearDifference;
+          const semesterOrder = { "1st": 1, "2nd": 2 };
+          const semesterDifference =
+            (semesterOrder[String(left.semester ?? "").trim()] ?? 99) -
+            (semesterOrder[String(right.semester ?? "").trim()] ?? 99);
+          if (semesterDifference !== 0) return semesterDifference;
+          return String(left.section ?? "").localeCompare(String(right.section ?? ""), undefined, {
+            numeric: true,
+            sensitivity: "base",
+          });
+        });
+    }
+
+    const groups = new Map();
+    projected.forEach((section) => {
+      const groupKey = `${section.year}::${section.semester}`;
+      if (!groups.has(groupKey)) groups.set(groupKey, []);
+      groups.get(groupKey).push(section);
+    });
+
+    groups.forEach((group) => {
+      const targetGroup = group.filter((section) => targetKeys.has(section.previewKey));
+      if (targetGroup.length === 0) return;
+
+      const blockStudents = students.filter((student) => (
+        String(student.status ?? "").trim().toLowerCase() !== "irregular" &&
+        String(student.year ?? "").trim() === String(group[0].year ?? "").trim() &&
+        String(student.semester ?? "").trim() === String(group[0].semester ?? "").trim()
+      ));
+      let availableCapacity = targetGroup.reduce((sum, section) => sum + Math.max(1, section.blockCapacity), 0);
+      let nextIndex = group.length;
+      while (blockStudents.length > availableCapacity) {
+        const newSection = {
+          ...group[0],
+          previewKey: `${group[0].year}::${String.fromCharCode(65 + nextIndex)}::${group[0].semester}`,
+          section: String.fromCharCode(65 + nextIndex),
+          blockCapacity: Number(previewData.blockCapacity),
+          irregularCapacity: Number(previewData.irregularCapacity),
+          students: [],
+          blockStudents: [],
+          irregularStudents: [],
+          irregularCount: 0,
+        };
+        group.push(newSection);
+        nextIndex += 1;
+        availableCapacity += newSection.blockCapacity;
+      }
+
+      let studentIndex = 0;
+      group.forEach((section) => {
+        section.blockStudents = blockStudents.slice(studentIndex, studentIndex + Math.max(1, section.blockCapacity));
+        section.students = [...section.irregularStudents, ...section.blockStudents];
+        studentIndex += section.blockStudents.length;
+      });
+    });
+
+    return Array.from(groups.values())
+      .flat()
+      .filter((section) => section.students.length > 0)
+      .sort((left, right) => {
+        const yearDifference = Number(left.year) - Number(right.year);
+        if (yearDifference !== 0) return yearDifference;
+        const semesterOrder = { "1st": 1, "2nd": 2 };
+        const semesterDifference =
+          (semesterOrder[String(left.semester ?? "").trim()] ?? 99) -
+          (semesterOrder[String(right.semester ?? "").trim()] ?? 99);
+        if (semesterDifference !== 0) return semesterDifference;
+        return String(left.section ?? "").localeCompare(String(right.section ?? ""), undefined, {
+          numeric: true,
+          sensitivity: "base",
+        });
+      });
+  }, [previewData, sections, students]);
 
   const displayedSections = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -740,7 +877,7 @@ function SectionList() {
           <button
             type="button"
             className="absolute inset-0 bg-slate-950/55"
-            onClick={() => { setShowConfirmation(false); setPreviewData(null); }}
+            onClick={() => { setShowConfirmation(false); setPreviewData(null); setPreviewSection(null); }}
           />
           <div className="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-white/30 bg-white shadow-2xl">
             <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4 sm:px-6">
@@ -751,7 +888,7 @@ function SectionList() {
               </div>
               <button
                 type="button"
-                onClick={() => { setShowConfirmation(false); setPreviewData(null); }}
+                onClick={() => { setShowConfirmation(false); setPreviewData(null); setPreviewSection(null); }}
                 className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-800"
                 aria-label="Close confirmation"
               >
@@ -773,11 +910,53 @@ function SectionList() {
                   <dd className="mt-2 whitespace-pre-wrap break-words text-sm font-semibold leading-6 text-slate-800">{previewData.irregularCapacity}</dd>
                 </div>
               </dl>
+              <div className="mt-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-800">Section Preview</h4>
+                    <p className="mt-1 text-xs text-slate-500">Click a section to view its projected students.</p>
+                  </div>
+                  <span className="text-xs font-semibold text-slate-500">{projectedSections.length} sections</span>
+                </div>
+                <div className="mt-3 space-y-4">
+                  {Array.from(
+                    projectedSections.reduce((yearGroups, section) => {
+                      const year = String(section.year ?? "");
+                      if (!yearGroups.has(year)) yearGroups.set(year, []);
+                      yearGroups.get(year).push(section);
+                      return yearGroups;
+                    }, new Map())
+                  ).sort(([left], [right]) => Number(left) - Number(right)).map(([year, yearSections]) => (
+                    <div key={year}>
+                      <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Year {year}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {yearSections.map((section) => (
+                          <button
+                            key={section.previewKey}
+                            type="button"
+                            onClick={() => setPreviewSection(section)}
+                            className={`rounded-lg border px-3 py-2 text-left transition ${
+                              previewSection?.previewKey === section.previewKey
+                                ? "border-emerald-600 bg-emerald-50 text-emerald-900"
+                                : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50/60"
+                            }`}
+                          >
+                            <span className="block text-xs font-bold">Section {section.section}</span>
+                            <span className="mt-1 block text-[0.68rem] text-slate-500">
+                              {section.students.length} students · {section.blockCapacity}/{section.irregularCapacity}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
             <div className="border-t border-gray-200 bg-white px-4 py-3 flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
-                onClick={() => { setShowConfirmation(false); setPreviewData(null); setCapacityValue(0); }}
+                onClick={() => { setShowConfirmation(false); setPreviewData(null); setPreviewSection(null); setCapacityValue(0); }}
                 className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-100"
               >
                 Cancel
@@ -801,6 +980,60 @@ function SectionList() {
                 )}
               </button>
             </div>
+            {previewSection && (
+              <div className="fixed inset-0 z-[250] flex items-center justify-center p-4">
+                <button
+                  type="button"
+                  className="absolute inset-0 bg-slate-950/45"
+                  onClick={() => setPreviewSection(null)}
+                  aria-label="Close projected student list"
+                />
+                <div className="relative flex max-h-[80vh] w-full max-w-xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl">
+                  <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+                    <div>
+                      <h4 className="font-bold text-slate-900">Year {previewSection.year} - Section {previewSection.section}</h4>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {previewSection.students.length} projected students · Block {previewSection.blockCapacity} · Irregular {previewSection.irregularCapacity}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewSection(null)}
+                      className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                      aria-label="Close projected student list"
+                    >
+                      <i className="fa-solid fa-xmark" />
+                    </button>
+                  </div>
+                  <div className="overflow-y-auto p-4">
+                    {previewSection.students.length > 0 ? (
+                      <div className="divide-y divide-slate-100 rounded-lg border border-slate-200">
+                        {previewSection.students.map((student) => {
+                          const isIrregular = String(student.status ?? "").trim().toLowerCase() === "irregular";
+                          return (
+                            <div key={student._id || student.studentNumber} className="flex items-center justify-between gap-4 px-4 py-3">
+                              <div className="min-w-0">
+                                <p className="truncate text-sm font-semibold text-slate-800">
+                                  {`${student.firstName ?? ""} ${student.lastName ?? ""}`.trim() || "Unnamed student"}
+                                </p>
+                                <p className="mt-0.5 text-xs text-slate-500">{student.studentNumber || "—"}</p>
+                              </div>
+                              <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                                isIrregular ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"
+                              }`}>
+                                {isIrregular ? "Irregular" : "Block"}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="py-8 text-center text-sm text-slate-500">No students projected in this section.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       }

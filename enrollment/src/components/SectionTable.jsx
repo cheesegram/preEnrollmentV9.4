@@ -287,17 +287,20 @@ function SectionTable({ sections, students, allSections = sections, onStudentsCh
                           <th className="px-4 py-3 text-center">Select</th>
                           <th className="px-4 py-3 text-left">Student Number</th>
                           <th className="px-4 py-3 text-left">Student Name</th>
+                          <th className="px-4 py-3 text-left">Status</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
                         {studentRowsForModal.map((student) => {
                           const studentId = String(student._id);
+                          const isIrregular = String(student.status ?? "").trim().toLowerCase() === "irregular";
                           return (
-                            <tr key={studentId}>
+                            <tr key={studentId} className={isIrregular ? "bg-amber-50/50" : ""}>
                               <td className="px-4 py-3 text-center">
                                 <input
                                   type="checkbox"
                                   checked={selectedStudentIds.includes(studentId)}
+                                  disabled={isIrregular}
                                   onChange={() => setSelectedStudentIds((current) =>
                                     current.includes(studentId) ? current.filter((id) => id !== studentId) : [...current, studentId]
                                   )}
@@ -306,6 +309,13 @@ function SectionTable({ sections, students, allSections = sections, onStudentsCh
                               </td>
                               <td className="px-4 py-3 font-medium">{student.studentNumber || "-"}</td>
                               <td className="px-4 py-3">{`${student.firstName ?? ""} ${student.lastName ?? ""}`.trim() || "-"}</td>
+                              <td className="px-4 py-3">
+                                <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
+                                  isIrregular ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"
+                                }`}>
+                                  {isIrregular ? "Irregular (Original Section)" : "Block"}
+                                </span>
+                              </td>
                             </tr>
                           );
                         })}

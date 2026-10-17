@@ -201,3 +201,17 @@ def test_move_expands_target_and_deletes_empty_source(client,db,student,section)
     assert result.status_code==200 and result.json()['section']['blockCount']==1
     assert db.sections.find_one({'section':'A'}) is None
     assert client.post('/api/students/move-section',json={'studentIds':[sid],'targetSection':{'year':'2','semester':'1st','section':'B'}}).status_code==404
+
+
+def test_irregular_students_cannot_be_moved_between_sections(client, db, student, section):
+    irregular = {**student, 'status': 'Irregular', 'irregularSection': ['A'], 'irregularYear': ['1']}
+    sid = client.post('/api/students', json=irregular).json()['_id']
+    db.sections.insert_one({**section, 'section': 'B'})
+
+    result = client.post('/api/students/move-section', json={
+        'studentIds': [sid],
+        'targetSection': {'year': '1', 'semester': '1st', 'section': 'B'},
+    })
+
+    assert result.status_code == 400
+    assert db.students.find_one({'studentNumber': irregular['studentNumber']})['section'] == 'A'
