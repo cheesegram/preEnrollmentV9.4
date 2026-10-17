@@ -50,12 +50,24 @@ function SectionList() {
     return `${year}::${section}::${semester}`;
   };
 
-  const getPreviewIrregularSectionKeys = (student) => {
-    const sectionsForStudent = Array.isArray(student.irregularSection) ? student.irregularSection : [];
-    const yearsForStudent = Array.isArray(student.irregularYear) ? student.irregularYear : [];
-    const semester = String(student.semester ?? "").trim();
-    return sectionsForStudent.map((section, index) => (
-      `${String(yearsForStudent[index] ?? yearsForStudent[0] ?? "").trim()}::${String(section ?? "").trim().toUpperCase()}::${semester}`
+  const getPreviewIrregularSectionKeys = (student, sectionSemester) => {
+    const sectionsForStudent = Array.isArray(student.irregularSection)
+      ? student.irregularSection
+      : student.irregularSection ? [student.irregularSection] : [];
+    const yearsForStudent = Array.isArray(student.irregularYear)
+      ? student.irregularYear
+      : student.irregularYear ? [student.irregularYear] : [];
+    const studentSemester = String(student.semester ?? "").trim();
+    const semester = studentSemester && studentSemester !== "N/A" ? studentSemester : sectionSemester;
+    const placements = [
+      [student.year, student.section],
+      ...sectionsForStudent.map((section, index) => [
+        yearsForStudent[index] ?? yearsForStudent[0] ?? "",
+        section,
+      ]),
+    ];
+    return placements.map(([year, section]) => (
+      `${String(year ?? "").trim()}::${String(section ?? "").trim().toUpperCase()}::${semester}`
     ));
   };
 
@@ -70,7 +82,7 @@ function SectionList() {
       const sectionStudents = students.filter((student) => {
         const isIrregular = String(student.status ?? "").trim().toLowerCase() === "irregular";
         return isIrregular
-          ? getPreviewIrregularSectionKeys(student).includes(key)
+          ? getPreviewIrregularSectionKeys(student, String(section.semester ?? "").trim()).includes(key)
           : getPreviewStudentSection(student) === key;
       });
       const irregularCount = sectionStudents.filter(
@@ -993,7 +1005,7 @@ function SectionList() {
                     <div>
                       <h4 className="font-bold text-slate-900">Year {previewSection.year} - Section {previewSection.section}</h4>
                       <p className="mt-1 text-xs text-slate-500">
-                        {previewSection.students.length} projected students · Block {previewSection.blockCapacity} · Irregular {previewSection.irregularCapacity}
+                        {previewSection.students.length} projected students · Block {previewSection.blockStudents.length}/{previewSection.blockCapacity} · Irregular {previewSection.irregularStudents.length}/{previewSection.irregularCapacity}
                       </p>
                     </div>
                     <button
